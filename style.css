@@ -1,268 +1,558 @@
-/* Globalne style i tło */
+/* style.css */
+
+/* Zmienne CSS dla łatwej zmiany kolorów i wartości */
+:root {
+    --primary-color: #6A5ACD; /* Głęboki fiolet */
+    --secondary-color: #483D8B; /* Ciemniejszy fiolet */
+    --accent-color: #20B2AA; /* Akcent turkusowy */
+    --text-light: #ecf0f1; /* Jasny tekst na ciemnym tle */
+    --text-dark: #34495e; /* Ciemny tekst na jasnym tle */
+    --card-background: rgba(255, 255, 255, 0.95); /* Lekko przezroczyste białe tło kart */
+    --overlay-background: rgba(44, 62, 80, 0.85); /* Ciemniejsze, przezroczyste tło dla stałych elementów */
+    --border-radius-large: 15px;
+    --border-radius-small: 8px;
+    --shadow-light: rgba(0, 0, 0, 0.15);
+    --shadow-medium: rgba(0, 0, 0, 0.3);
+    --shadow-heavy: rgba(0, 0, 0, 0.5);
+    --discord-brand-color: #7289DA;
+}
+
+/* --- Globalne style --- */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center; /* Centrowanie poziome */
-    align-items: center;   /* Centrowanie pionowe */
-    min-height: 100vh;     /* Cała wysokość widocznego obszaru */
-    width: 100vw;          /* Cała szerokość widocznego obszaru */
-    background-color: #ADD8E6; /* JASNONIEBIESKIE TŁO */
-    box-sizing: border-box;
-    overflow: hidden; /* Zapobiegaj przewijaniu całego body */
-}
-
-/* Kontener symulujący ekran aplikacji - teraz na cały ekran lub większy */
-.app-container {
-    width: 100%;           /* Pełna szerokość */
-    height: 100vh;         /* Pełna wysokość */
-    background-color: #ADD8E6; /* JASNONIEBIESKIE TŁO */
+    padding: 0;
+    font-family: 'Poppins', sans-serif; /* Nowoczesna i czytelna czcionka */
+    line-height: 1.6;
+    color: var(--text-dark);
+    overflow: hidden; /* Ważne: ukrywa paski przewijania, jeśli ekran nie ma aktywnego overflow */
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    border: none;
-    box-shadow: none;
-    overflow: hidden;
     position: relative;
+    /* Dodaj efekt przejścia dla płynnego zmieniania tła */
+    transition: background 0.8s ease;
 }
 
-/* Style dla poszczególnych "ekranów" */
-.screen {
+/* Ustawienia dla particles.js - animowane tło */
+#particles-js {
+    position: fixed; /* Będzie jako tło, nie przewija się */
     width: 100%;
     height: 100%;
+    background-color: var(--primary-color); /* Kolor tła particles.js */
+    background-image: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    z-index: -1; /* Umieszcza pod resztą zawartości */
+    transition: background 0.8s ease; /* Płynna zmiana tła particles.js */
+}
+
+/* Główny wrapper dla całej zawartości strony, aby była nad tłem particles.js */
+.site-wrapper {
+    position: relative;
+    z-index: 1; /* Upewnia się, że zawartość jest widoczna */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Wyśrodkowanie zawartości w pionie */
+    align-items: center; /* Wyśrodkowanie zawartości w poziomie */
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Główny kontener aplikacji - "ramka" wokół ekranów */
+.app-container {
+    background-color: rgba(255, 255, 255, 0.05); /* Lekko przezroczyste tło dla całej apki */
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 15px 30px var(--shadow-medium), 0 0 0 2px var(--accent-color); /* Podwójny cień i ramka */
+    width: 90%;
+    max-width: 600px; /* Maksymalna szerokość dla wyglądu aplikacji */
+    height: 80vh; /* Stała wysokość */
+    max-height: 800px;
+    overflow: hidden; /* Ukrywa zawartość wychodzącą poza kontener */
+    position: relative; /* Dla pozycjonowania ekranów */
+    backdrop-filter: blur(10px); /* Efekt rozmycia tła za kontenerem */
+    display: flex;
+    flex-direction: column;
+    transition: all 0.5s ease-in-out; /* Płynne przejścia dla kontenera */
+}
+
+/* Style dla poszczególnych ekranów */
+.screen {
     position: absolute;
     top: 0;
     left: 0;
-    display: none; /* Domyślnie ukryte */
-    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: var(--card-background); /* Tło dla każdego ekranu */
+    padding: 30px;
     box-sizing: border-box;
-    padding: 20px;
-    background-color: #ADD8E6; /* JASNONIEBIESKIE TŁO */
-    justify-content: flex-start; /* Ustawienie treści na górze */
-    align-items: center; /* Centrowanie elementów w ekranie */
-    text-align: center; /* Centrowanie tekstu w elementach */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Rozłożenie elementów */
+    opacity: 0;
+    pointer-events: none; /* Domyślnie nieinteraktywny */
+    transform: translateX(100%); /* Start poza ekranem po prawej */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    border-radius: var(--border-radius-large); /* Zaokrąglenie w środku */
+    overflow-y: auto; /* Przewijanie dla zawartości ekranu */
 }
 
 .screen.active {
-    display: flex; /* Aktywny ekran jest widoczny */
+    opacity: 1;
+    pointer-events: auto; /* Aktywny ekran jest interaktywny */
+    transform: translateX(0); /* Wjeżdża na środek */
 }
 
-/* Nagłówek wspólny dla ekranów */
-.header {
+/* Header dla każdego ekranu (nagłówek na górze) */
+.screen-header {
     text-align: center;
-    padding-bottom: 20px;
-    width: 100%; /* Rozciągnij na całą szerokość */
-    margin-top: 20px; /* Odstęp od góry ekranu */
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--accent-color);
+    position: sticky; /* Nagłówek będzie przyklejony do góry przy przewijaniu */
+    top: 0;
+    background-color: var(--card-background); /* Upewnij się, że nagłówek ma tło */
+    z-index: 10; /* Nad innymi elementami przy przewijaniu */
+    border-radius: var(--border-radius-large) var(--border-radius-large) 0 0; /* Górne zaokrąglenia */
 }
 
-.header h1 {
-    color: #FFFFFF; /* BIAŁY TEKST */
-    font-size: 4vw; /* Rozmiar czcionki skalujący się z szerokością okna */
-    font-weight: bold;
+.screen-header .header-title {
+    color: var(--primary-color);
+    font-size: 2.8em;
     margin: 0;
+    text-shadow: 1px 1px 2px var(--shadow-light);
 }
 
-/* Stylizacja przycisków na głównym ekranie */
-.main-buttons-container {
+.screen-header .header-tagline {
+    font-size: 1.1em;
+    color: var(--text-dark);
+    margin-top: 5px;
+}
+
+/* --- Przyciski i nawigacja --- */
+.button {
     display: flex;
-    justify-content: center; /* Centrowanie przycisków */
-    padding: 20px 0;
-    gap: 2vw; /* Odstęp między przyciskami skalujący się */
-    width: 80%; /* Szerokość kontenera przycisków */
-    max-width: 600px; /* Maksymalna szerokość dla czytelności */
-    margin-top: 50px; /* Większy odstęp, skoro nie ma szarego obszaru */
-}
-
-.button-style {
-    flex: 1;
-    padding: 1.5vw 2vw; /* Padding skalujący się */
+    align-items: center;
+    justify-content: center;
+    padding: 15px 25px;
     border: none;
-    font-size: 2vw; /* Rozmiar czcionki skalujący się */
-    font-weight: bold;
+    border-radius: var(--border-radius-small);
+    font-weight: 700;
+    font-size: 1.1em;
     cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    transition: all 0.3s ease;
+    text-decoration: none; /* Dla a-tagów, jeśli używasz */
+    margin: 10px 0; /* Odstęp między przyciskami */
+    width: 100%; /* Domyślna szerokość na małych ekranach */
     box-sizing: border-box;
-    white-space: nowrap; /* Zapobiegaj zawijaniu tekstu */
 }
 
-.button-kategorie {
-    background-color: #FFFFFF; /* BIAŁE TŁO DLA KATEGORIE */
-    color: #000000; /* CZARNY TEKST DLA KATEGORIE */
-    border-radius: 2vw; /* Zaokrąglone rogi skalujące się */
-    border: 2px solid #000000; /* CZARNA RAMKA */
+.button-primary {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    box-shadow: 0 4px 10px var(--shadow-light);
 }
 
-.button-wejdz {
-    background-color: #FFFFFF; /* BIAŁE TŁO DLA WEJDŹ */
-    color: #000000; /* CZARNY TEKST DLA WEJDŹ */
-    border-radius: 2vw; /* Zaokrąglone rogi skalujące się */
-    border: 2px solid #000000; /* CZARNA RAMKA */
+.button-primary:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px var(--shadow-medium);
 }
 
-/* Style dla ekranu z kategoriami/przedmiotami (Grid Screen) */
+.button-secondary {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    box-shadow: 0 4px 10px var(--shadow-light);
+}
+
+.button-secondary:hover {
+    background-color: darken(var(--accent-color), 10%); /* Ciemniejszy odcień */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px var(--shadow-medium);
+}
+
+.button-discord {
+    background-color: var(--discord-brand-color);
+    color: var(--text-light);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.button-discord:hover {
+    background-color: darken(var(--discord-brand-color), 8%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.discord-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    fill: currentColor; /* SVG przyjmie kolor tekstu z przycisku */
+}
+
+.button-back {
+    background: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1em;
+    border: 2px solid var(--primary-color);
+    margin-top: 20px;
+    padding: 10px 20px;
+}
+
+.button-back:hover {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    transform: translateX(-5px); /* Animacja strzałki w lewo */
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.button-icon {
+    margin-left: 8px; /* Odstęp dla ikon na przyciskach */
+    font-size: 1.2em; /* Rozmiar ikon emoji */
+}
+
+.arrow {
+    margin-right: 8px;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+.button-back:hover .arrow {
+    transform: translateX(-5px);
+}
+
+/* Efekt "glow" na przyciskach */
+.glow-on-hover {
+    position: relative;
+    z-index: 0;
+}
+.glow-on-hover:before {
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: var(--border-radius-small);
+}
+.glow-on-hover:active {
+    color: #000
+}
+.glow-on-hover:active:after {
+    background: transparent;
+}
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color); /* Kolor tła przycisku */
+    left: 0;
+    top: 0;
+    border-radius: var(--border-radius-small);
+}
+
+/* Zmiana koloru tła w after dla przycisków secondary i discord */
+.button-secondary.glow-on-hover:after {
+    background: var(--accent-color);
+}
+.button-discord.glow-on-hover:after {
+    background: var(--discord-brand-color);
+}
+.button-back.glow-on-hover:after {
+    background: var(--card-background);
+    border: 2px solid var(--primary-color); /* Zachowaj ramkę */
+}
+
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
+
+/* --- Siatki kategorii i przedmiotów --- */
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Dwie równe kolumny */
-    gap: 2vw; /* Odstęp między kafelkami skalujący się */
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-top: 2vw;
-    box-sizing: border-box;
-    width: 90%;
-    max-width: 700px; /* Maksymalna szerokość dla siatki */
-    margin-top: 30px;
+    gap: 20px; /* Odstęp między elementami siatki */
+    padding: 10px; /* Lekki padding wewnątrz siatki */
+    flex-grow: 1; /* Pozwala siatce zajmować dostępną przestrzeń */
+}
+
+.categories-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Responsywna siatka dla kategorii */
+}
+
+.items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Responsywna siatka dla przedmiotów */
 }
 
 .grid-card {
-    background-color: #FFFFFF; /* BIAŁE TŁO KAFELKA */
-    color: #000000; /* CZARNY TEKST KAFELKA */
-    border-radius: 1.5vw; /* Zaokrąglone rogi skalujące się */
+    background-color: var(--background-light); /* Jasne tło dla kart */
+    padding: 20px;
+    border-radius: var(--border-radius-small);
+    box-shadow: 0 4px 12px var(--shadow-light);
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
-    flex-direction: column; /* Aby tekst i cena były pod sobą */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 10vw; /* Minimalna wysokość kafelka skalująca się */
-    text-align: center;
-    font-size: 2vw; /* Rozmiar czcionki skalujący się */
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    padding: 1vw; /* Dodatkowy padding dla większych kafelków */
-    border: 2px solid #000000; /* CZARNA RAMKA */
+    min-height: 120px; /* Minimalna wysokość karty */
+    line-height: 1.4;
 }
 
 .grid-card:hover {
-    background-color: #E0FFFF; /* Jaśniejszy niebieski po najechaniu */
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 20px var(--shadow-medium);
+    background-color: var(--primary-color);
+    color: var(--text-light);
 }
 
-/* Style dla ekranu szczegółów przedmiotu (Item Details Screen) */
-.details-screen-content {
+.category-item { /* Jeśli zdecydujesz się używać tego do kategorii */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Treść od góry */
     align-items: center;
-    flex-grow: 1;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-small);
+    box-shadow: 0 4px 12px var(--shadow-light);
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+.category-item:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 20px var(--shadow-medium);
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.category-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.category-item:hover .category-icon {
+    color: var(--accent-color);
+}
+
+/* --- Sekcja szczegółów przedmiotu --- */
+.details-screen-content {
+    background-color: var(--background-light);
+    padding: 30px;
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 6px 20px var(--shadow-light);
     text-align: center;
-    padding: 40px 20px; /* Odstępy wewnątrz kontenera */
-    width: 100%; /* Pełna szerokość */
-    max-width: 800px; /* Maksymalna szerokość dla czytelności */
-    box-sizing: border-box;
+    flex-grow: 1; /* Rozciąga się, by wypełnić dostępną przestrzeń */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Wyśrodkowanie treści w pionie */
 }
 
-.details-screen-content h2 {
-    color: #000000; /* CZARNY TEKST DLA TYTUŁU PRZEDMIOTU */
-    font-size: 3.5vw;
-    margin-bottom: 3vw;
+.item-detail-title {
+    color: var(--primary-color);
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px var(--shadow-light);
 }
 
-.item-info {
-    color: #000000; /* CZARNY TEKST DLA INFORMACJI O PŁATNOŚCI */
-    font-size: 2.5vw;
-    margin-bottom: 4vw;
-    max-width: 80%; /* Max szerokość dla tekstu */
-    line-height: 1.5;
+.item-detail-info {
+    font-size: 1.1em;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    white-space: pre-wrap; /* Zachowuje złamania linii z JS */
 }
 
 .payment-sent-button {
-    background-color: #FFFFFF; /* BIAŁE TŁO PRZYCISKU PŁATNOŚCI */
-    color: #000000; /* CZARNY TEKST */
-    border-radius: 2vw;
-    border: 2px solid #000000; /* CZARNA RAMKA */
-    padding: 1.5vw 3vw;
-    font-size: 2vw;
-    font-weight: bold;
-    cursor: pointer;
-    margin-bottom: 2vw;
-    white-space: nowrap;
+    margin-bottom: 20px;
 }
 
 .discord-info {
-    color: #000000; /* CZARNY TEKST */
-    font-size: 1.8vw;
-    margin-top: 2vw;
-    line-height: 1.4;
-    max-width: 80%;
+    font-size: 0.95em;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+    opacity: 0.8;
 }
 
 .discord-link {
-    color: #000000; /* CZARNY TEKST DLA LINKU DISCORDA */
-    text-decoration: underline;
-    cursor: pointer;
-    display: block;
-    margin-top: 1vw;
-    font-size: 1.8vw;
-}
-
-/* Styl dla przycisku powrotu */
-.back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    cursor: pointer;
-    color: #000000; /* CZARNY TEKST DLA PRZYCISKU POWROTU */
-    font-size: 1.8vw; /* Skalujący się rozmiar czcionki */
+    justify-content: center;
+    color: var(--discord-brand-color);
     text-decoration: none;
-    z-index: 10;
-    padding: 10px; /* Zwiększ obszar klikalny */
+    font-weight: 600;
+    font-size: 1em;
+    padding: 10px 15px;
+    border: 2px solid var(--discord-brand-color);
+    border-radius: var(--border-radius-small);
+    transition: all 0.3s ease;
+    margin-top: 10px;
 }
 
-.back-button .arrow {
-    font-size: 2.5vw; /* Skalująca się strzałka */
-    margin-right: 10px; /* Większy odstęp */
+.discord-link:hover {
+    background-color: var(--discord-brand-color);
+    color: var(--text-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Media queries dla mniejszych ekranów (np. smartfonów) - opcjonalne, ale dobre dla responsywności */
+.discord-link .button-icon {
+    margin-left: 5px; /* Odstęp dla strzałki w linku */
+}
+
+.discord-text {
+    word-break: break-all; /* Łamanie długiego linku */
+}
+
+/* --- Responsywność --- */
 @media (max-width: 768px) {
     .app-container {
-        max-width: 400px;
-        height: 80vh;
-        margin-top: 20px;
-        border: 1px solid #333;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        width: 95%;
+        height: 90vh; /* Większa wysokość na mobilnych */
+        max-width: 95%; /* Mniejsza maksymalna szerokość */
     }
-    .header h1 {
-        font-size: 30px;
+
+    .screen {
+        padding: 20px;
     }
-    .button-style {
-        font-size: 18px;
-        padding: 12px;
-        border-radius: 20px;
-        gap: 16px;
+
+    .screen-header .header-title {
+        font-size: 2.2em;
     }
-    .grid-container {
-        gap: 16px;
-        padding-top: 20px;
-        width: calc(100% - 40px);
+
+    .screen-header .header-tagline {
+        font-size: 1em;
     }
+
+    .button {
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+
+    .categories-grid,
+    .items-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); /* Mniejsze karty na małych ekranach */
+        gap: 15px;
+    }
+
     .grid-card {
-        font-size: 20px;
-        min-height: 120px;
-        border-radius: 15px;
-        padding: 10px;
+        min-height: 100px;
+        font-size: 1em;
     }
-    .details-screen-content h2 {
-        font-size: 28px;
+
+    .details-screen-content {
+        padding: 20px;
     }
-    .item-info {
-        font-size: 20px;
+
+    .item-detail-title {
+        font-size: 1.8em;
     }
-    .payment-sent-button {
-        font-size: 18px;
-        padding: 12px 30px;
-        border-radius: 20px;
-    }
-    .discord-info, .discord-link {
-        font-size: 16px;
-    }
-    .back-button {
-        font-size: 16px;
-        padding: 0;
-    }
-    .back-button .arrow {
-        font-size: 24px;
-        margin-right: 5px;
+
+    .item-detail-info {
+        font-size: 1em;
     }
 }
+
+@media (max-width: 480px) {
+    .app-container {
+        border-radius: 10px; /* Jeszcze mniejsze zaokrąglenia */
+    }
+
+    .screen {
+        padding: 15px;
+    }
+
+    .screen-header .header-title {
+        font-size: 1.8em;
+    }
+
+    .screen-header .header-tagline {
+        font-size: 0.9em;
+    }
+
+    .button {
+        font-size: 0.9em;
+        padding: 10px 15px;
+    }
+
+    .categories-grid,
+    .items-grid {
+        grid-template-columns: 1fr; /* Jedna kolumna na najmniejszych ekranach */
+        gap: 10px;
+    }
+
+    .grid-card {
+        min-height: 80px;
+    }
+
+    .item-detail-title {
+        font-size: 1.5em;
+    }
+
+    .item-detail-info {
+        font-size: 0.9em;
+    }
+}
+
+
+/* --- Animacje CSS --- */
+
+/* Animacja dla całych modułów (sekcji) pojawiających się na ekranie */
+.module-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animacja wjazdu ekranów (już zdefiniowana w .screen, ale tu jest powtórzenie) */
+/* .screen.active {
+    animation: slideInFromRight 0.5s ease-out forwards;
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+} */
