@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3WA-SHOP - Web App</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+    <div class="app-container">
+
+        <div id="mainScreen" class="screen active">
+            <div class="header">
+                <h1>M3WA-SHOP</h1>
+            </div>
+            <div class="main-buttons-container">
+                <a href="#" class="button-style button-kategorie" onclick="showCategoriesScreen(); return false;">KATEGORIE</a>
+                <a href="#" class="button-style button-wejdz" onclick="showCategoriesScreen(); return false;">wejdź</a>
+            </div>
+        </div>
+
+        <div id="categoriesScreen" class="screen">
+            <div class="header">
+                <h1>Wybierz Kategorię</h1>
+            </div>
+            <div class="grid-container" id="categoryGrid">
+                </div>
+            <a href="#" class="back-button" onclick="showScreen('mainScreen'); return false;">
+                <span class="arrow">&larr;</span> Powrót do menu głównego
+            </a>
+        </div>
+
+        <div id="itemsScreen" class="screen">
+            <div class="header">
+                <h1 id="itemsHeaderTitle"></h1>
+            </div>
+            <div class="grid-container" id="itemGrid">
+                </div>
+            <a href="#" class="back-button" onclick="showCategoriesScreen(); return false;">
+                <span class="arrow">&larr;</span> Powrót do kategorii
+            </a>
+        </div>
+
+        <div id="itemDetailsScreen" class="screen">
+            <a href="#" class="back-button" onclick="showItemsScreen(currentCategory); return false;">
+                <span class="arrow">&larr;</span> Powrót do listy
+            </a>
+            <div class="details-screen-content">
+                <h2 id="itemTitle"></h2>
+                <p id="itemPaymentInfo" class="item-info"></p>
+                <button class="payment-sent-button" onclick="openDiscord();">wysłałem płatność</button>
+                <p class="discord-info">Zrób screena że wysyłałeś pieniądze, a następnie stwórz ticketa na naszym discordzie.</p>
+                <a href="https://discord.gg/aTHTuQ8g" target="_blank" class="discord-link">https://discord.gg/aTHTuQ8g</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Dane o kategoriach i przedmiotach
+        const categoriesData = {
+            "Metody": [
+                { name: "Rockstar Method", price: "20 zł", details: "Wyślij sumę 20 zł na numer 508 478 404." },
+                { name: "Uber Method", price: "10 zł", details: "Wyślij sumę 10 zł na numer 508 478 404." },
+                { name: "Paypal Hitting", price: "20 zł", details: "Wyślij sumę 20 zł na numer 508 478 404." },
+                { name: "Members Discord", price: "Cena na tickecie", details: "Cena ustalana na tickecie, minimalna kwota to 5 zł." }
+            ],
+            "Hacking": [
+                { name: "acc-crack", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "free-streaming-itp", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "free-spotify-p", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "rat-tools", price: "100 zł", details: "Wyślij sumę 100 zł (PSC +20%) na numer 508 478 404." }
+            ],
+            "Rzeczy Do Kupna": [
+                { name: "Generator-Nitro", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Rangi", price: "10 zł", details: "Ranga Seller: 10 zł (PSC +20%)." },
+                { name: "Gry", price: "Różne", details: "Ceny gier: od 4 zł do 20 zł (szczegóły w opisie)." },
+                { name: "Ludzi-na-serwer", price: "Cena na tickecie", details: "Cena ustalana na tickecie, minimum jaki musicie posiadać to 5 zł." },
+                { name: "Konto-Discord", price: "2 zł", details: "Wyślij sumę 2 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Konto-TikTok", price: "2 zł", details: "Wyślij sumę 2 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Konto-Steam", price: "5 zł", details: "Wyślij sumę 5 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Aplikacja-do-metody-steam", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Naprawka-pliku-st", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Wymiana-waluty", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "Modelki", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "Nowa-Era", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "Forza-Horizon-5-Full", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "HBO-Max", price: "Cena na tickecie", details: "Cena ustalana na tickecie." }
+            ]
+        };
+
+        // Dodatkowe szczegóły dla gier
+        const gameDetails = {
+            "Gry": [
+                { name: "Gierka od 0 do 50zł", price: "4 zł", details: "Wyślij 4 zł." },
+                { name: "Gierka od 50 do 150zł", price: "5 zł", details: "Wyślij 5 zł." },
+                { name: "Gierka od 150 w górę", price: "6 zł", details: "Wyślij 6 zł." },
+                { name: "Pakiet 2 gierek od 0 do 50zł", price: "6 zł", details: "Wyślij 6 zł." },
+                { name: "Pakiet 2 gierek od 50 do 150zł", price: "8 zł", details: "Wyślij 8 zł." },
+                { name: "Pakiet 2 gierek od 150 w górę", price: "10 zł", details: "Wyślij 10 zł." },
+                { name: "Pakiet losowych 2 gierek", price: "5 zł", details: "Wyślij 5 zł." },
+                { name: "Pakiet losowych 3 gierek", price: "8 zł", details: "Wyślij 8 zł." },
+                { name: "Pakiet losowych 4 gierek", price: "11 zł", details: "Wyślij 11 zł." },
+                { name: "Pakiet losowych 5 gierek", price: "14 zł", details: "Wyślij 14 zł." },
+                { name: "Pakiet losowych 6 gierek", price: "17 zł", details: "Wyślij 17 zł." },
+                { name: "Pakiet losowych 7 gierek", price: "20 zł", details: "Wyślij 20 zł." }
+            ]
+        };
+
+        let currentCategory = ''; // Przechowuje aktualnie wybraną kategorię
+
+        // Funkcja do przełączania ekranów
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Funkcja do generowania i pokazywania ekranu z kategoriami
+        function showCategoriesScreen() {
+            const categoryGrid = document.getElementById('categoryGrid');
+            categoryGrid.innerHTML = ''; // Wyczyść poprzednie kategorie
+
+            Object.keys(categoriesData).forEach(categoryName => {
+                const card = document.createElement('div');
+                card.classList.add('grid-card');
+                card.innerText = categoryName;
+                card.onclick = () => showItemsScreen(categoryName);
+                categoryGrid.appendChild(card);
+            });
+
+            showScreen('categoriesScreen');
+        }
+
+        // Funkcja do generowania i pokazywania ekranu z przedmiotami danej kategorii
+        function showItemsScreen(categoryName) {
+            currentCategory = categoryName; // Zapisz aktualną kategorię
+            document.getElementById('itemsHeaderTitle').innerText = categoryName;
+            const itemGrid = document.getElementById('itemGrid');
+            itemGrid.innerHTML = ''; // Wyczyść poprzednie przedmioty
+
+            let itemsToShow = categoriesData[categoryName];
+            
+            // Specjalna obsługa dla kategorii "Gry"
+            if (categoryName === "Rzeczy Do Kupna" && itemsToShow.some(item => item.name === "Gry")) {
+                itemsToShow = [];
+                categoriesData[categoryName].forEach(item => {
+                    if (item.name === "Gry") {
+                        gameDetails["Gry"].forEach(game => itemsToShow.push(game));
+                    } else {
+                        itemsToShow.push(item);
+                    }
+                });
+            }
+
+            itemsToShow.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('grid-card');
+                card.innerHTML = `${item.name} <br> Cena: ${item.price}`;
+                card.onclick = () => showItemDetails(item.name, item.details);
+                itemGrid.appendChild(card);
+            });
+
+            showScreen('itemsScreen');
+        }
+
+
+        // Funkcja do pokazywania ekranu szczegółów przedmiotu
+        function showItemDetails(itemName, itemDetails) {
+            document.getElementById('itemTitle').innerText = itemName;
+            document.getElementById('itemPaymentInfo').innerText = itemDetails + "\n\nZrób screena że wysyłałeś pieniądze, a następnie stwórz ticketa na naszym discordzie.";
+            showScreen('itemDetailsScreen');
+        }
+
+
+        // Funkcja do otwierania linku Discorda
+        function openDiscord() {
+            window.open("https://discord.gg/aTHTuQ8g", "_blank");
+        }
+
+        // Domyślnie pokaż ekran główny
+        showScreen('mainScreen');
+    </script>
+</body>
+</html>
