@@ -3,99 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>M3WA-SHOP - Web App</title>
+    <style>
+        /* Globalne style i tło */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center; /* Centrowanie poziome */
+            align-items: center;   /* Centrowanie pionowe */
+            min-height: 100vh;     /* Cała wysokość widocznego obszaru */
+            width: 100vw;          /* Cała szerokość widocznego obszaru */
+            background-color: #ADD8E6; /* JASNONIEBIESKIE TŁO */
+            box-sizing: border-box;
+            overflow: hidden; /* Zapobiegaj przewijaniu całego body */
+        }
 
-    <title>M3WA-SHOP - Web App | Twoja Nowa Era Zakupów</title>
-    <meta name="description" content="Oficjalna strona M3WA-SHOP Web App. Odkryj najlepsze kategorie produktów i dołącz do naszej społeczności Discord po dokonaniu płatności.">
-    <meta name="keywords" content="M3WA-SHOP, web app, sklep internetowy, produkty, kategorie, płatność, discord, hacking, metody, gry">
-    <meta name="author" content="jogurcikol">
+        /* Kontener symulujący ekran aplikacji - teraz na cały ekran lub większy */
+        .app-container {
+            width: 100%;           /* Pełna szerokość */
+            height: 100vh;         /* Pełna wysokość */
+            background-color: #ADD8E6; /* JASNONIEBIESKIE TŁO */
+            display: flex;
+            flex-direction: column;
+            border: none;
+            box-shadow: none;
+            overflow: hidden;
+            position: relative;
+        }
 
-    <meta property="og:title" content="M3WA-SHOP - Web App | Twoja Nowa Era Zakupów">
-    <meta property="og:description" content="Odkryj najlepsze kategorie produktów i dołącz do naszej społeczności Discord po dokonaniu płatności.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jogurcikol.github.io/mewka/"> <meta property="og:image" content="https://jogurcikol.github.io/mewka/social-share-image.jpg"> <meta property="og:site_name" content="M3WA-SHOP">
+        /* Style dla poszczególnych "ekranów" */
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none; /* Domyślnie ukryte */
+            flex-direction: column;
+            box-sizing: border-box;
+            padding: 20px;
+            background-color: #ADD8E6; /* JASNONIEBIESKIE TŁO */
+            justify-content: flex-start; /* Ustawienie treści na górze */
+            align-items: center; /* Centrowanie elementów w ekranie */
+            text-align: center; /* Centrowanie tekstu w elementach */
+        }
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@TwojTwitterUzytkownik"> <meta name="twitter:title" content="M3WA-SHOP - Web App | Twoja Nowa Era Zakupów">
-    <meta name="twitter:description" content="Odkryj najlepsze kategorie produktów i dołącz do naszej społeczności Discord po dokonaniu płatności.">
-    <meta name="twitter:image" content="https://jogurcikol.github.io/mewka/social-share-image.jpg"> <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        .screen.active {
+            display: flex; /* Aktywny ekran jest widoczny */
+        }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        /* Nagłówek wspólny dla ekranów */
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            width: 100%; /* Rozciągnij na całą szerokość */
+            margin-top: 20px; /* Odstęp od góry ekranu */
+        }
 
-    <link rel="stylesheet" href="style.css">
+        .header h1 {
+            color: #FFFFFF; /* BIAŁY TEKST */
+            font-size: 4vw; /* Rozmiar czcionki skalujący się z szerokością okna */
+            font-weight: bold;
+            margin: 0;
+        }
 
-    </head>
+        /* Stylizacja przycisków na głównym ekranie */
+        .main-buttons-container {
+            display: flex;
+            justify-content: center; /* Centrowanie przycisków */
+            padding: 20px 0;
+            gap: 2vw; /* Odstęp między przyciskami skalujący się */
+            width: 80%; /* Szerokość kontenera przycisków */
+            max-width: 600px; /* Maksymalna szerokość dla czytelności */
+            margin-top: 50px; /* Większy odstęp, skoro nie ma szarego obszaru */
+        }
+
+        .button-style {
+            flex: 1;
+            padding: 1.5vw 2vw; /* Padding skalujący się */
+            border: none;
+            font-size: 2vw; /* Rozmiar czcionki skalujący się */
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+            white-space: nowrap; /* Zapobiegaj zawijaniu tekstu */
+        }
+
+        .button-kategorie {
+            background-color: #FFFFFF; /* BIAŁE TŁO DLA KATEGORIE */
+            color: #000000; /* CZARNY TEKST DLA KATEGORIE */
+            border-radius: 2vw; /* Zaokrąglone rogi skalujące się */
+            border: 2px solid #000000; /* CZARNA RAMKA */
+        }
+
+        .button-wejdz {
+            background-color: #FFFFFF; /* BIAŁE TŁO DLA WEJDŹ */
+            color: #000000; /* CZARNY TEKST DLA WEJDŹ */
+            border-radius: 2vw; /* Zaokrąglone rogi skalujące się */
+            border: 2px solid #000000; /* CZARNA RAMKA */
+        }
+
+        /* Usunięto .main-content-area, jego style nie są już potrzebne */
+
+        /* Style dla ekranu z kategoriami/przedmiotami (Grid Screen) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Dwie równe kolumny */
+            gap: 2vw; /* Odstęp między kafelkami skalujący się */
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-top: 2vw;
+            box-sizing: border-box;
+            width: 90%;
+            max-width: 700px; /* Maksymalna szerokość dla siatki */
+            margin-top: 30px;
+        }
+
+        .grid-card {
+            background-color: #FFFFFF; /* BIAŁE TŁO KAFELKA */
+            color: #000000; /* CZARNY TEKST KAFELKA */
+            border-radius: 1.5vw; /* Zaokrąglone rogi skalujące się */
+            display: flex;
+            flex-direction: column; /* Aby tekst i cena były pod sobą */
+            justify-content: center;
+            align-items: center;
+            min-height: 10vw; /* Minimalna wysokość kafelka skalująca się */
+            text-align: center;
+            font-size: 2vw; /* Rozmiar czcionki skalujący się */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            padding: 1vw; /* Dodatkowy padding dla większych kafelków */
+            border: 2px solid #000000; /* CZARNA RAMKA */
+        }
+
+        .grid-card:hover {
+            background-color: #E0FFFF; /* Jaśniejszy niebieski po najechaniu */
+        }
+
+        /* Style dla ekranu szczegółów przedmiotu (Item Details Screen) */
+        .details-screen-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Treść od góry */
+            align-items: center;
+            flex-grow: 1;
+            text-align: center;
+            padding: 40px 20px; /* Odstępy wewnątrz kontenera */
+            width: 100%; /* Pełna szerokość */
+            max-width: 800px; /* Maksymalna szerokość dla czytelności */
+            box-sizing: border-box;
+        }
+
+        .details-screen-content h2 {
+            color: #000000; /* CZARNY TEKST DLA TYTUŁU PRZEDMIOTU */
+            font-size: 3.5vw;
+            margin-bottom: 3vw;
+        }
+
+        .item-info {
+            color: #000000; /* CZARNY TEKST DLA INFORMACJI O PŁATNOŚCI */
+            font-size: 2.5vw;
+            margin-bottom: 4vw;
+            max-width: 80%; /* Max szerokość dla tekstu */
+            line-height: 1.5;
+        }
+
+        .payment-sent-button {
+            background-color: #FFFFFF; /* BIAŁE TŁO PRZYCISKU PŁATNOŚCI */
+            color: #000000; /* CZARNY TEKST */
+            border-radius: 2vw;
+            border: 2px solid #000000; /* CZARNA RAMKA */
+            padding: 1.5vw 3vw;
+            font-size: 2vw;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 2vw;
+            white-space: nowrap;
+        }
+
+        .discord-info {
+            color: #000000; /* CZARNY TEKST */
+            font-size: 1.8vw;
+            margin-top: 2vw;
+            line-height: 1.4;
+            max-width: 80%;
+        }
+
+        .discord-link {
+            color: #000000; /* CZARNY TEKST DLA LINKU DISCORDA */
+            text-decoration: underline;
+            cursor: pointer;
+            display: block;
+            margin-top: 1vw;
+            font-size: 1.8vw;
+        }
+
+        /* Styl dla przycisku powrotu */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #000000; /* CZARNY TEKST DLA PRZYCISKU POWROTU */
+            font-size: 1.8vw; /* Skalujący się rozmiar czcionki */
+            text-decoration: none;
+            z-index: 10;
+            padding: 10px; /* Zwiększ obszar klikalny */
+        }
+
+        .back-button .arrow {
+            font-size: 2.5vw; /* Skalująca się strzałka */
+            margin-right: 10px; /* Większy odstęp */
+        }
+
+        /* Media queries dla mniejszych ekranów (np. smartfonów) - opcjonalne, ale dobre dla responsywności */
+        @media (max-width: 768px) {
+            .app-container {
+                max-width: 400px;
+                height: 80vh;
+                margin-top: 20px;
+                border: 1px solid #333;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            }
+            .header h1 {
+                font-size: 30px;
+            }
+            .button-style {
+                font-size: 18px;
+                padding: 12px;
+                border-radius: 20px;
+                gap: 16px;
+            }
+            /* Usunięto style .main-content-area */
+            .grid-container {
+                gap: 16px;
+                padding-top: 20px;
+                width: calc(100% - 40px);
+            }
+            .grid-card {
+                font-size: 20px;
+                min-height: 120px;
+                border-radius: 15px;
+                padding: 10px;
+            }
+            .details-screen-content h2 {
+                font-size: 28px;
+            }
+            .item-info {
+                font-size: 20px;
+            }
+            .payment-sent-button {
+                font-size: 18px;
+                padding: 12px 30px;
+                border-radius: 20px;
+            }
+            .discord-info, .discord-link {
+                font-size: 16px;
+            }
+            .back-button {
+                font-size: 16px;
+                padding: 0;
+            }
+            .back-button .arrow {
+                font-size: 24px;
+                margin-right: 5px;
+            }
+        }
+    </style>
+</head>
 <body>
-    <div id="particles-js" aria-hidden="true"></div>
+    <div class="app-container">
 
-    <div class="site-wrapper">
+        <div id="mainScreen" class="screen active">
+            <div class="header">
+                <h1>M3WA-SHOP</h1>
+            </div>
+            <div class="main-buttons-container">
+                <a href="#" class="button-style button-kategorie" onclick="showCategoriesScreen(); return false;">KATEGORIE</a>
+                <a href="#" class="button-style button-wejdz" onclick="showCategoriesScreen(); return false;">wejdź</a>
+            </div>
+            </div>
 
-        <div class="app-container">
-
-            <section id="mainScreen" class="screen active" role="region" aria-labelledby="mainScreenTitle">
-                <header class="screen-header">
-                    <h1 id="mainScreenTitle" class="header-title">M3WA-SHOP</h1>
-                    <p class="header-tagline">Twoja Galaktyka Niezwykłych Odkryć</p>
-                </header>
-                <div class="main-buttons-container">
-                    <button type="button" class="button button-primary glow-on-hover" data-action="showCategoriesScreen" aria-label="Przejdź do Kategorii">
-                        KATEGORIE <span class="button-icon" aria-hidden="true">🛒</span>
-                    </button>
-                    <button type="button" class="button button-secondary glow-on-hover" data-action="showCategoriesScreen" aria-label="Wejdź do sklepu">
-                        wejdź <span class="button-icon" aria-hidden="true">🚀</span>
-                    </button>
+        <div id="categoriesScreen" class="screen">
+            <div class="header">
+                <h1>Wybierz Kategorię</h1>
+            </div>
+            <div class="grid-container" id="categoryGrid">
                 </div>
-            </section>
+            <a href="#" class="back-button" onclick="showScreen('mainScreen'); return false;">
+                <span class="arrow">&larr;</span> Powrót do menu głównego
+            </a>
+        </div>
 
-            <section id="categoriesScreen" class="screen" role="region" aria-labelledby="categoriesScreenTitle">
-                <header class="screen-header">
-                    <h1 id="categoriesScreenTitle" class="header-title">Wybierz Kategorię</h1>
-                </header>
-                <div class="grid-container categories-grid" id="categoryGrid">
-                    </div>
-                <button type="button" class="button button-back back-to-main glow-on-hover" data-action="showMainScreen" aria-label="Powrót do menu głównego">
-                    <span class="arrow" aria-hidden="true">&larr;</span> Powrót do menu głównego
-                </button>
-            </section>
+        <div id="itemsScreen" class="screen">
+            <div class="header">
+                <h1 id="itemsHeaderTitle"></h1>
+            </div>
+            <div class="grid-container" id="itemGrid">
+                </div>
+            <a href="#" class="back-button" onclick="showCategoriesScreen(); return false;">
+                <span class="arrow">&larr;</span> Powrót do kategorii
+            </a>
+        </div>
 
-            <section id="itemsScreen" class="screen" role="region" aria-labelledby="itemsHeaderTitle">
-                <header class="screen-header">
-                    <h1 class="header-title" id="itemsHeaderTitle"></h1>
-                </header>
-                <div class="grid-container items-grid" id="itemGrid">
-                    </div>
-                <button type="button" class="button button-back back-to-categories glow-on-hover" data-action="showCategoriesScreen" aria-label="Powrót do kategorii">
-                    <span class="arrow" aria-hidden="true">&larr;</span> Powrót do kategorii
-                </button>
-            </section>
+        <div id="itemDetailsScreen" class="screen">
+            <a href="#" class="back-button" onclick="showItemsScreen(currentCategory); return false;">
+                <span class="arrow">&larr;</span> Powrót do listy
+            </a>
+            <div class="details-screen-content">
+                <h2 id="itemTitle"></h2>
+                <p id="itemPaymentInfo" class="item-info"></p>
+                <button class="payment-sent-button" onclick="openDiscord();">wysłałem płatność</button>
+                <p class="discord-info">Zrób screena że wysyłałeś pieniądze, a następnie stwórz ticketa na naszym discordzie.</p>
+                <a href="https://discord.gg/aTHTuQ8g" target="_blank" class="discord-link">https://discord.gg/aTHTuQ8g</a>
+            </div>
+        </div>
 
-            <section id="itemDetailsScreen" class="screen" role="region" aria-labelledby="itemTitle">
-                <button type="button" class="button button-back back-to-items glow-on-hover" data-action="showPreviousItems" aria-label="Powrót do listy przedmiotów">
-                    <span class="arrow" aria-hidden="true">&larr;</span> Powrót do listy
-                </button>
-                <article class="details-screen-content">
-                    <h2 id="itemTitle" class="item-detail-title"></h2>
-                    <p id="itemPaymentInfo" class="item-detail-info"></p>
+    </div>
 
-                    <button type="button" class="button button-discord payment-sent-button glow-on-hover" data-action="openDiscord" aria-label="Zgłoś wysłaną płatność na Discordzie">
-                        <svg class="discord-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.1 96.3">
-                            <path fill="currentColor" d="M107.7 8.07A105.15 105.15 0 0 0 81.4 0c-11.3 0-22.7 0-34 0-26.6 0-47.3 22-47.3 48.8 0 14.6 6.8 28.1 18 37.4l-3.3 27.2 29.5-17.7c17.4 5.3 35.8 5.3 53.1 0l29.5 17.7-3.3-27.2c11.3-9.3 18-22.8 18-37.4 0-26.7-20.7-48.8-47.3-48.8zM24.7 61.2c-3.7 0-6.7-3.2-6.7-7s3-7 6.7-7c3.7 0 6.7 3.2 6.7 7s-3 7-6.7 7zm77.6 0c-3.7 0-6.7-3.2-6.7-7s3-7 6.7-7c3.7 0 6.7 3.2 6.7 7s-3 7-6.7 7zm-19.4-18.7c-3.7 4.1-8.5 7.1-13.3 9.2a40.7 40.7 0 0 1-22.4 0c-4.9-2.1-9.6-5.1-13.3-9.2-1.4-1.5-3.5-1.9-5.1-1.2-1.6.7-2.3 2.7-1.7 4.3 4.3 4.7 9.8 8.6 15.6 11.8a54.56 54.56 0 0 0 26.8 0c5.9-3.2 11.3-7.1 15.6-11.8.6-1.6-.1-3.6-1.7-4.3-1.5-.7-3.7-.3-5.1 1.2z"/>
-                        </svg>
-                        wysłałem płatność
-                    </button>
-                    <p class="discord-info">Zrób screena że wysyłałeś pieniądze, a następnie stwórz ticketa na naszym discordzie.</p>
-                    <a href="https://discord.gg/aTHTuQ8g" target="_blank" rel="noopener noreferrer" class="discord-link glow-on-hover" aria-label="Link do serwera Discord M3WA-SHOP">
-                        <span class="discord-text">https://discord.gg/aTHTuQ8g</span>
-                        <span class="button-icon" aria-hidden="true">➡️</span>
-                    </a>
-                </article>
-            </section>
+    <script>
+        // Dane o kategoriach i przedmiotach
+        const categoriesData = {
+            "Metody": [
+                { name: "Rockstar Method", price: "20 zł", details: "Wyślij sumę 20 zł na numer 508 478 404." },
+                { name: "Uber Method", price: "10 zł", details: "Wyślij sumę 10 zł na numer 508 478 404." },
+                { name: "Paypal Hitting", price: "20 zł", details: "Wyślij sumę 20 zł na numer 508 478 404." },
+                { name: "Members Discord", price: "Cena na tickecie", details: "Cena ustalana na tickecie, minimalna kwota to 5 zł." }
+            ],
+            "Hacking": [
+                { name: "acc-crack", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "free-streaming-itp", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "free-spotify-p", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "rat-tools", price: "100 zł", details: "Wyślij sumę 100 zł (PSC +20%) na numer 508 478 404." }
+            ],
+            "Rzeczy Do Kupna": [
+                { name: "Generator-Nitro", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Rangi", price: "10 zł", details: "Ranga Seller: 10 zł (PSC +20%)." },
+                { name: "Gry", price: "Różne", details: "Ceny gier: od 4 zł do 20 zł (szczegóły w opisie)." },
+                { name: "Ludzi-na-serwer", price: "Cena na tickecie", details: "Cena ustalana na tickecie, minimum jaki musicie posiadać to 5 zł." },
+                { name: "Konto-Discord", price: "2 zł", details: "Wyślij sumę 2 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Konto-TikTok", price: "2 zł", details: "Wyślij sumę 2 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Konto-Steam", price: "5 zł", details: "Wyślij sumę 5 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Aplikacja-do-metody-steam", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Naprawka-pliku-st", price: "10 zł", details: "Wyślij sumę 10 zł (PSC +20%) na numer 508 478 404." },
+                { name: "Wymiana-waluty", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "Modelki", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "Nowa-Era", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "Forza-Horizon-5-Full", price: "Cena na tickecie", details: "Cena ustalana na tickecie." },
+                { name: "HBO-Max", price: "Cena na tickecie", details: "Cena ustalana na tickecie." }
+            ]
+        };
 
-        </div> </div> <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="script.js"></script>
+        // Dodatkowe szczegóły dla gier
+        const gameDetails = {
+            "Gry": [
+                { name: "Gierka od 0 do 50zł", price: "4 zł", details: "Wyślij 4 zł." },
+                { name: "Gierka od 50 do 150zł", price: "5 zł", details: "Wyślij 5 zł." },
+                { name: "Gierka od 150 w górę", price: "6 zł", details: "Wyślij 6 zł." },
+                { name: "Pakiet 2 gierek od 0 do 50zł", price: "6 zł", details: "Wyślij 6 zł." },
+                { name: "Pakiet 2 gierek od 50 do 150zł", price: "8 zł", details: "Wyślij 8 zł." },
+                { name: "Pakiet 2 gierek od 150 w górę", price: "10 zł", details: "Wyślij 10 zł." },
+                { name: "Pakiet losowych 2 gierek", price: "5 zł", details: "Wyślij 5 zł." },
+                { name: "Pakiet losowych 3 gierek", price: "8 zł", details: "Wyślij 8 zł." },
+                { name: "Pakiet losowych 4 gierek", price: "11 zł", details: "Wyślij 11 zł." },
+                { name: "Pakiet losowych 5 gierek", price: "14 zł", details: "Wyślij 14 zł." },
+                { name: "Pakiet losowych 6 gierek", price: "17 zł", details: "Wyślij 17 zł." },
+                { name: "Pakiet losowych 7 gierek", price: "20 zł", details: "Wyślij 20 zł." }
+            ]
+        };
 
+        let currentCategory = ''; // Przechowuje aktualnie wybraną kategorię
+
+        // Funkcja do przełączania ekranów
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Funkcja do generowania i pokazywania ekranu z kategoriami
+        function showCategoriesScreen() {
+            const categoryGrid = document.getElementById('categoryGrid');
+            categoryGrid.innerHTML = ''; // Wyczyść poprzednie kategorie
+
+            Object.keys(categoriesData).forEach(categoryName => {
+                const card = document.createElement('div');
+                card.classList.add('grid-card');
+                card.innerText = categoryName;
+                card.onclick = () => showItemsScreen(categoryName);
+                categoryGrid.appendChild(card);
+            });
+
+            showScreen('categoriesScreen');
+        }
+
+        // Funkcja do generowania i pokazywania ekranu z przedmiotami danej kategorii
+        function showItemsScreen(categoryName) {
+            currentCategory = categoryName; // Zapisz aktualną kategorię
+            document.getElementById('itemsHeaderTitle').innerText = categoryName;
+            const itemGrid = document.getElementById('itemGrid');
+            itemGrid.innerHTML = ''; // Wyczyść poprzednie przedmioty
+
+            let itemsToShow = categoriesData[categoryName];
+            
+            // Specjalna obsługa dla kategorii "Gry"
+            if (categoryName === "Rzeczy Do Kupna" && itemsToShow.some(item => item.name === "Gry")) {
+                // Jeśli istnieje element "Gry" w Rzeczy Do Kupna, zastąp go szczegółami gier
+                itemsToShow = []; // Zresetuj, aby dodać tylko konkretne gry
+                categoriesData[categoryName].forEach(item => {
+                    if (item.name === "Gry") {
+                        gameDetails["Gry"].forEach(game => itemsToShow.push(game));
+                    } else {
+                        itemsToShow.push(item);
+                    }
+                });
+            }
+
+            itemsToShow.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('grid-card');
+                card.innerHTML = `${item.name} <br> Cena: ${item.price}`; // Nazwa i cena
+                card.onclick = () => showItemDetails(item.name, item.details);
+                itemGrid.appendChild(card);
+            });
+
+            showScreen('itemsScreen');
+        }
+
+
+        // Funkcja do pokazywania ekranu szczegółów przedmiotu
+        function showItemDetails(itemName, itemDetails) {
+            document.getElementById('itemTitle').innerText = itemName;
+            // Dodaj stałą informację o Discordzie do szczegółów płatności
+            document.getElementById('itemPaymentInfo').innerText = itemDetails + "\n\nZrób screena że wysyłałeś pieniądze, a następnie stwórz ticketa na naszym discordzie.";
+            showScreen('itemDetailsScreen');
+        }
+
+
+        // Funkcja do otwierania linku Discorda
+        function openDiscord() {
+            window.open("https://discord.gg/aTHTuQ8g", "_blank");
+        }
+
+        // Domyślnie pokaż ekran główny
+        showScreen('mainScreen');
+    </script>
 </body>
 </html>
